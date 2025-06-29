@@ -1,0 +1,11 @@
+id_buku,judul,tahun_terbit,jumlah_halaman,nama_pengarang,kebangsaan,tahun_lahir,nama_penerbit,asal_penerbit,jumlah_terbitan,genre
+B1,Laskar Pelangi,2005,529,Andrea Hirata,Indonesia,1967,Bentang Pustaka,Indonesia,200,Fiksi
+B2,Harry Potter and the Sorcerer's Stone,1997,309,J.K. Rowling,UK,1965,Bloomsbury,UK,1000,Fantasi
+B3,To Kill a Mockingbird,1960,281,Harper Lee,USA,1926,J.B. Lippincott & Co.,USA,500,Drama
+B4,The Hobbit,1937,310,J.R.R. Tolkien,UK,1892,George Allen & Unwin,UK,700,Fantasi
+B5,Sapiens,2011,498,Yuval Noah Harari,Israel,1976,Harvill Secker,UK,300,Sejarah
+B6,The Da Vinci Code,2003,689,Dan Brown,USA,1964,Doubleday,USA,450,Thriller
+B7,Atomic Habits,2018,320,James Clear,USA,1986,Avery Publishing,USA,150,Self-help
+B8,The Alchemist,1988,208,Paulo Coelho,Brazil,1947,HarperTorch,USA,600,Fiksi
+B9,The Subtle Art of Not Giving a F*ck,2016,224,Mark Manson,USA,1984,HarperOne,USA,200,Self-help
+B10,Ayat-Ayat Cinta,2004,413,Habiburrahman El Shirazy,Indonesia,1976,Republika,Indonesia,250,Religi

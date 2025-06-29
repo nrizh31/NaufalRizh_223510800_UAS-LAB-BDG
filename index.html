@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Visualisasi Buku dan Pengarang</title>
+    <link
+      href="https://unpkg.com/popoto@4.0.7/dist/popoto.min.css"
+      rel="stylesheet"
+    />
+    <!-- Google Fonts -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <!-- Icons -->
+    <link
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: #ffffff;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        margin: 0;
+        min-height: 100vh;
+        overflow-x: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+            circle at 20% 80%,
+            rgba(120, 119, 198, 0.3) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 80% 20%,
+            rgba(255, 119, 198, 0.3) 0%,
+            transparent 50%
+          ),
+          radial-gradient(
+            circle at 40% 40%,
+            rgba(120, 219, 255, 0.2) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+        z-index: -1;
+      }
+
+      #container {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+      }
+
+      #popoto-section {
+        flex: 1;
+        min-width: 800px; /* Increased the width */
+        max-width: 1200px; /* Increased the width */
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        justify-content: center;
+        align-items: center;
+      }
+
+      #popoto-taxonomy,
+      #popoto-graph,
+      #popoto-cypher,
+      #popoto-results {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        padding: 20px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        width: 100%; /* Make the width 100% of the container */
+      }
+
+      #popoto-taxonomy:hover,
+      #popoto-graph:hover,
+      #popoto-cypher:hover,
+      #popoto-results:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+        border-color: rgba(255, 255, 255, 0.3);
+      }
+
+      #popoto-taxonomy {
+        min-height: 120px;
+        position: relative;
+      }
+
+      #popoto-taxonomy::before {
+        content: "\f0e8";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 18px;
+      }
+
+      #popoto-graph {
+        min-height: 600px; /* Increased size */
+        position: relative;
+        overflow: hidden;
+      }
+
+      #popoto-graph::before {
+        content: "\f1e0";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 18px;
+      }
+
+      #popoto-cypher {
+        min-height: 100px;
+        position: relative;
+      }
+
+      #popoto-cypher::before {
+        content: "\f121";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        top: 15px;
+        right: 20px;
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 18px;
+      }
+
+      #popoto-results {
+        font-weight: 500;
+        font-size: 16px;
+        text-align: center;
+        color: #e0e7ff;
+        position: relative;
+        min-height: 60px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #popoto-results::before {
+        content: "\f080";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        margin-right: 10px;
+        color: #91c949;
+        font-size: 18px;
+      }
+
+      .ppt-div-graph {
+        background: rgba(255, 255, 255, 0.05) !important;
+        border-radius: 12px;
+      }
+
+      .ppt-container-cypher {
+        background: rgba(30, 41, 59, 0.8) !important;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      }
+
+      .ppt-container-cypher pre {
+        color: #e2e8f0 !important;
+        font-family: "JetBrains Mono", "Fira Code", "Consolas", monospace !important;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .loading {
+        animation: pulse 2s infinite;
+      }
+
+      @media (max-width: 1200px) {
+        #container {
+          flex-direction: column;
+          gap: 15px;
+          padding: 15px;
+        }
+
+        #popoto-section {
+          min-width: unset;
+          max-width: unset;
+        }
+      }
+
+      @media (max-width: 768px) {
+        #container {
+          padding: 10px;
+          gap: 10px;
+        }
+
+        #popoto-taxonomy,
+        #popoto-graph,
+        #popoto-cypher,
+        #popoto-results {
+          padding: 15px;
+        }
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 20px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Visualisasi Buku dan Pengarang</h1>
+    <div id="container">
+      <div id="popoto-section">
+        <div id="popoto-taxonomy" class="ppt-taxo-nav"></div>
+        <div id="popoto-graph" class="ppt-div-graph"></div>
+        <div id="popoto-cypher" class="ppt-container-cypher"></div>
+        <div id="popoto-results"></div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/d3@7/dist/d3.min.js"></script>
+    <script src="https://unpkg.com/popoto@4.0.7/dist/popoto.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/neo4j-driver@5.18.0/lib/browser/neo4j-web.min.js"></script>
+    <script>
+      // Koneksi Neo4j dengan password yang benar
+      const driver = neo4j.driver(
+        "bolt://localhost:7687",
+        neo4j.auth.basic("neo4j", "12345678")
+      );
+
+      popoto.runner.DRIVER = driver;
+
+      // Konfigurasi node untuk Popoto sesuai dengan gambar
+      popoto.provider.node.Provider = {
+        Book: {
+          returnAttributes: ["id", "title", "pages", "year", "editions"],
+          constraintAttribute: "title"
+        },
+        Author: {
+          returnAttributes: ["name", "birthYear"],
+          constraintAttribute: "name"
+        },
+        Publisher: {
+          returnAttributes: ["name", "origin"],
+          constraintAttribute: "name"
+        },
+        Genre: {
+          returnAttributes: ["name"],
+          constraintAttribute: "name"
+        },
+        Country: {
+          returnAttributes: ["name"],
+          constraintAttribute: "name"
+        }
+      };
+
+      // Add relationships for Author and Genre
+      popoto.provider.link.Provider = {
+        getTextValue: function(link) {
+          const labelMap = {
+            'PUBLISHED_BY': 'published by',
+            'BELONGS_TO': 'belongs to',
+            'WRITTEN_BY': 'written by',  // Relationship between Author and Genre
+            'LOCATED_IN': 'located in'
+          };
+          return labelMap[link.label] || link.label;
+        }
+      };
+
+      // Cypher query to get data
+      const cypherQuery = `
+        MATCH (a:Author)-[:WRITTEN_BY]->(g:Genre), 
+              (b:Book)-[:PUBLISHED_BY]->(p:Publisher),
+              (p)-[:LOCATED_IN]->(c:Country)
+        RETURN a.name AS author, g.name AS genre, b.title AS book, p.name AS publisher, c.name AS country
+      `;
+
+      // Running the Cypher query
+      driver.session().run(cypherQuery)
+        .then(result => {
+          console.log(result.records); // Log results
+          // You can further use result records to update the visualization
+        })
+        .catch(err => {
+          console.error('Error running query:', err);
+        });
+
+      // Set konfigurasi tampilan
+      popoto.result.RESULTS_PAGE_SIZE = 15;
+      popoto.query.MAX_RESULTS_COUNT = 1000;
+
+      // Update UI jumlah hasil
+      popoto.result.onTotalResultCount(function(count) {
+        document.getElementById('popoto-results').innerHTML = `Total results: ${count}`;
+      });
+
+      // Jalankan aplikasi
+      driver.verifyConnectivity()
+        .then(() => {
+          console.log("Neo4j connected successfully");
+          
+          // Start Popoto with Book node
+          popoto.start("Book", () => {
+            console.log("Popoto started with Buku node");
+
+            // Event listener untuk click pada node
+            popoto.graph.on(popoto.graph.Events.GRAPH_NODE_CLICK, function(node) {
+              console.log("Popoto node clicked:", node);
+            });
+          });
+        })
+        .catch((error) => {
+          console.error("Neo4j connection error:", error);
+          alert("Gagal konek ke Neo4j. Pastikan Neo4j berjalan dan password benar: " + error.message);
+        });
+    </script>
+  </body>
+</html>
